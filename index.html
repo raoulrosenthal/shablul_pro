@@ -11,11 +11,16 @@
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 20px; background-color: #f2f2f7; color: #1c1c1e; }
         .container { max-width: 400px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         h2 { text-align: center; margin-top: 0; }
-        label { font-weight: bold; display: block; margin-top: 15px; margin-bottom: 5px; font-size: 12px; color: #8e8e93; text-transform: uppercase; letter-spacing: 0.5px; }
+        .slot-label { font-weight: bold; display: block; margin-top: 15px; margin-bottom: 5px; font-size: 12px; color: #8e8e93; text-transform: uppercase; letter-spacing: 0.5px; }
         select, input[type="time"] { width: 100%; padding: 10px; border: 1px solid #d1d1d6; border-radius: 8px; font-size: 16px; box-sizing: border-box; background: white; }
-        .row { display: flex; gap: 10px; margin-bottom: 10px; }
+        .row { display: flex; gap: 10px; margin-bottom: 5px; }
         .row select { flex: 2; }
         .row input { flex: 1; }
+        
+        /* Recurring Checkbox Style */
+        .recurring-row { display: flex; align-items: center; margin-bottom: 15px; font-size: 14px; color: #3a3a3c; }
+        .recurring-row input[type="checkbox"] { margin-right: 8px; width: 18px; height: 18px; accent-color: #007aff; }
+
         .toggle-container { display: flex; align-items: center; justify-content: space-between; margin-top: 20px; padding: 10px 0; border-top: 1px solid #e5e5ea; border-bottom: 1px solid #e5e5ea; }
         .switch { position: relative; display: inline-block; width: 50px; height: 30px; }
         .switch input { opacity: 0; width: 0; height: 0; }
@@ -23,7 +28,7 @@
         .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: #34c759; }
         input:checked + .slider:before { transform: translateX(20px); }
-        button { width: 100%; background-color: #007aff; color: white; border: none; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 8px; margin-top: 20px; cursor: pointer; }
+        button { width: 100%; background-color: #007aff; color: white; border: none; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 8px; margin-top: 10px; cursor: pointer; }
         button:active { background-color: #005bb5; }
         
         /* Premium Button Styles */
@@ -38,21 +43,22 @@
 <div class="container">
     <h2>ShablulPro 🐌</h2>
 
-    <label for="userSelect">User</label>
+    <label class="slot-label" for="userSelect" style="margin-top: 0;">User</label>
     <select id="userSelect">
         <option value="raoul">Raoul</option>
         <option value="debby">Debby</option>
     </select>
 
     <div class="toggle-container">
-        <label for="isActive" style="margin: 0; font-size: 16px; color: #1c1c1e; text-transform: none; font-weight: normal;">Active (Vacation Mode)</label>
+        <label for="isActive" style="margin: 0; font-size: 16px; color: #1c1c1e; font-weight: normal;">Active (Vacation Mode)</label>
         <label class="switch">
             <input type="checkbox" id="isActive" checked>
             <span class="slider"></span>
         </label>
     </div>
 
-    <label>Swim 1</label>
+    <!-- SLOT 1 -->
+    <label class="slot-label">Swim 1</label>
     <div class="row">
         <select id="day1">
             <option value="Monday">Monday</option>
@@ -65,8 +71,13 @@
         </select>
         <input type="time" id="time1" value="06:15">
     </div>
+    <div class="recurring-row">
+        <input type="checkbox" id="recurring1">
+        <label for="recurring1" style="font-weight: normal; margin: 0;">Repeat weekly</label>
+    </div>
 
-    <label>Swim 2 (Optional)</label>
+    <!-- SLOT 2 -->
+    <label class="slot-label">Swim 2 (Optional)</label>
     <div class="row">
         <select id="day2">
             <option value="">-- None --</option>
@@ -80,8 +91,13 @@
         </select>
         <input type="time" id="time2" value="06:15">
     </div>
+    <div class="recurring-row">
+        <input type="checkbox" id="recurring2">
+        <label for="recurring2" style="font-weight: normal; margin: 0;">Repeat weekly</label>
+    </div>
 
-    <label>Swim 3 (Optional)</label>
+    <!-- SLOT 3 -->
+    <label class="slot-label">Swim 3 (Optional)</label>
     <div class="row">
         <select id="day3">
             <option value="">-- None --</option>
@@ -94,6 +110,10 @@
             <option value="Sunday">Sunday</option>
         </select>
         <input type="time" id="time3" value="06:15">
+    </div>
+    <div class="recurring-row">
+        <input type="checkbox" id="recurring3">
+        <label for="recurring3" style="font-weight: normal; margin: 0;">Repeat weekly</label>
     </div>
 
     <button onclick="submitSchedule()">Save Weekly Plan</button>
@@ -117,19 +137,21 @@
         const isActive = document.getElementById('isActive').checked;
         const statusDiv = document.getElementById('status');
 
-        // Dynamically build the schedules array based on which days are selected
         const schedules = [];
         for (let i = 1; i <= 3; i++) {
             const day = document.getElementById('day' + i).value;
             const time = document.getElementById('time' + i).value;
+            const isRecurring = document.getElementById('recurring' + i).checked;
             
-            // Only add to the array if a day is actively selected
             if (day !== "") {
-                schedules.push({ day_of_week: day, time: time });
+                schedules.push({ 
+                    day_of_week: day, 
+                    time: time,
+                    recurring: isRecurring
+                });
             }
         }
 
-        // Prevent empty submissions
         if (schedules.length === 0 && isActive) {
             statusDiv.innerText = "⚠️ Please select at least one day or toggle Vacation Mode.";
             statusDiv.style.color = "#ff9f0a";
