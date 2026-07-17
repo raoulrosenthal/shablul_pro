@@ -11,8 +11,11 @@
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 20px; background-color: #f2f2f7; color: #1c1c1e; }
         .container { max-width: 400px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         h2 { text-align: center; margin-top: 0; }
-        label { font-weight: bold; display: block; margin-top: 15px; margin-bottom: 5px; }
-        select, input[type="time"] { width: 100%; padding: 10px; border: 1px solid #d1d1d6; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+        label { font-weight: bold; display: block; margin-top: 15px; margin-bottom: 5px; font-size: 12px; color: #8e8e93; text-transform: uppercase; letter-spacing: 0.5px; }
+        select, input[type="time"] { width: 100%; padding: 10px; border: 1px solid #d1d1d6; border-radius: 8px; font-size: 16px; box-sizing: border-box; background: white; }
+        .row { display: flex; gap: 10px; margin-bottom: 10px; }
+        .row select { flex: 2; }
+        .row input { flex: 1; }
         .toggle-container { display: flex; align-items: center; justify-content: space-between; margin-top: 20px; padding: 10px 0; border-top: 1px solid #e5e5ea; border-bottom: 1px solid #e5e5ea; }
         .switch { position: relative; display: inline-block; width: 50px; height: 30px; }
         .switch input { opacity: 0; width: 0; height: 0; }
@@ -23,7 +26,7 @@
         button { width: 100%; background-color: #007aff; color: white; border: none; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 8px; margin-top: 20px; cursor: pointer; }
         button:active { background-color: #005bb5; }
         
-        /* New Premium Button Styles */
+        /* Premium Button Styles */
         .premium-btn { background-color: #ff9f0a; margin-top: 15px; font-size: 16px; }
         .premium-btn:active { background-color: #cc7f08; }
         
@@ -39,32 +42,61 @@
     <select id="userSelect">
         <option value="raoul">Raoul</option>
         <option value="debby">Debby</option>
-        <!-- Dan's free ride is over -->
     </select>
 
     <div class="toggle-container">
-        <label for="isActive" style="margin: 0;">Active (Vacation Mode)</label>
+        <label for="isActive" style="margin: 0; font-size: 16px; color: #1c1c1e; text-transform: none; font-weight: normal;">Active (Vacation Mode)</label>
         <label class="switch">
             <input type="checkbox" id="isActive" checked>
             <span class="slider"></span>
         </label>
     </div>
 
-    <label for="daySelect">Day of the Week</label>
-    <select id="daySelect">
-        <option value="Monday">Monday</option>
-        <option value="Tuesday">Tuesday</option>
-        <option value="Wednesday">Wednesday</option>
-        <option value="Thursday">Thursday</option>
-        <option value="Friday">Friday</option>
-        <option value="Saturday">Saturday</option>
-        <option value="Sunday">Sunday</option>
-    </select>
+    <label>Swim 1</label>
+    <div class="row">
+        <select id="day1">
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+            <option value="Sunday">Sunday</option>
+        </select>
+        <input type="time" id="time1" value="06:15">
+    </div>
 
-    <label for="timeSelect">Time</label>
-    <input type="time" id="timeSelect" value="06:15">
+    <label>Swim 2 (Optional)</label>
+    <div class="row">
+        <select id="day2">
+            <option value="">-- None --</option>
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+            <option value="Sunday">Sunday</option>
+        </select>
+        <input type="time" id="time2" value="06:15">
+    </div>
 
-    <button onclick="submitSchedule()">Save Schedule</button>
+    <label>Swim 3 (Optional)</label>
+    <div class="row">
+        <select id="day3">
+            <option value="">-- None --</option>
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+            <option value="Sunday">Sunday</option>
+        </select>
+        <input type="time" id="time3" value="06:15">
+    </div>
+
+    <button onclick="submitSchedule()">Save Weekly Plan</button>
     
     <!-- The Trap -->
     <button class="premium-btn" onclick="triggerPaywall()">⭐️ Buy a subscription to ShablulPro for $9.99/month</button>
@@ -83,9 +115,26 @@
     async function submitSchedule() {
         const userId = document.getElementById('userSelect').value;
         const isActive = document.getElementById('isActive').checked;
-        const day = document.getElementById('daySelect').value;
-        const time = document.getElementById('timeSelect').value;
         const statusDiv = document.getElementById('status');
+
+        // Dynamically build the schedules array based on which days are selected
+        const schedules = [];
+        for (let i = 1; i <= 3; i++) {
+            const day = document.getElementById('day' + i).value;
+            const time = document.getElementById('time' + i).value;
+            
+            // Only add to the array if a day is actively selected
+            if (day !== "") {
+                schedules.push({ day_of_week: day, time: time });
+            }
+        }
+
+        // Prevent empty submissions
+        if (schedules.length === 0 && isActive) {
+            statusDiv.innerText = "⚠️ Please select at least one day or toggle Vacation Mode.";
+            statusDiv.style.color = "#ff9f0a";
+            return;
+        }
 
         statusDiv.innerText = "Saving...";
         statusDiv.style.color = "#8e8e93";
@@ -93,7 +142,7 @@
         const payload = {
             user_id: userId,
             is_active: isActive,
-            schedules: [{ day_of_week: day, time: time }]
+            schedules: schedules
         };
 
         try {
