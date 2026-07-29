@@ -57,6 +57,14 @@
             <span class="slider"></span>
         </label>
     </div>
+    
+    <div class="toggle-container">
+        <label for="emailNotif" style="margin: 0; font-size: 16px; color: #1c1c1e; font-weight: normal;">📧 Email on Failure</label>
+        <label class="switch">
+            <input type="checkbox" id="emailNotif">
+            <span class="slider"></span>
+        </label>
+    </div>
 
     <!-- SLOT 1 -->
     <label class="slot-label">Swim 1</label>
@@ -136,6 +144,7 @@
     async function submitSchedule() {
         const userId = document.getElementById('userSelect').value;
         const isActive = document.getElementById('isActive').checked;
+        const emailNotif = document.getElementById('emailNotif').checked;
         const statusDiv = document.getElementById('status');
 
         const schedules = [];
@@ -165,6 +174,7 @@
         const payload = {
             user_id: userId,
             is_active: isActive,
+            email_notification: emailNotif,
             schedules: schedules
         };
 
