@@ -10,7 +10,8 @@
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 20px; background-color: #f2f2f7; color: #1c1c1e; }
         .container { max-width: 400px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h2 { text-align: center; margin-top: 0; }
+        h2 { text-align: center; margin-top: 0; margin-bottom: 4px; }
+        .subtitle { text-align: center; font-size: 13px; color: #007aff; font-weight: 600; margin-bottom: 16px; }
         .slot-label { font-weight: bold; display: block; margin-top: 15px; margin-bottom: 5px; font-size: 12px; color: #8e8e93; text-transform: uppercase; letter-spacing: 0.5px; }
         select, input[type="time"] { width: 100%; padding: 10px; border: 1px solid #d1d1d6; border-radius: 8px; font-size: 16px; box-sizing: border-box; background: white; }
         .row { display: flex; gap: 10px; margin-bottom: 5px; }
@@ -42,15 +43,14 @@
 
 <div class="container">
     <h2>ShablulPro 🐌</h2>
+    <div class="subtitle">Mindbody Edition</div>
 
     <label class="slot-label" for="userSelect" style="margin-top: 0;">User</label>
     <select id="userSelect">
         <option value="raoul">Raoul</option>
         <option value="debby">Debby</option>
-        <option value="dan">Dan</option>
         <option value="jasmin">Jasmin</option>
     </select>
-
 
     <div class="toggle-container">
         <label for="emailNotif" style="margin: 0; font-size: 16px; color: #1c1c1e; font-weight: normal;">📧 Email on Failure</label>
@@ -137,7 +137,6 @@
 
     async function submitSchedule() {
         const userId = document.getElementById('userSelect').value;
-
         const emailNotif = document.getElementById('emailNotif').checked;
         const statusDiv = document.getElementById('status');
 
@@ -167,6 +166,7 @@
 
         const payload = {
             user_id: userId,
+            platform: "mindbody",
             is_active: true,
             email_notification: emailNotif,
             schedules: schedules
