@@ -197,7 +197,10 @@
             upcomingEl.className = "";
             const items = upcoming.map(b => {
                 const label = `${escapeHtml(b.date)} • ${escapeHtml(b.time)}`;
-                const cls = escapeHtml(b.class_name || "Lane Reservation");
+                const rawCls = (b.class_name || "Lane Reservation")
+                    .replace(/\s*(Late Cancel|Cancel)\s*$/i, "")
+                    .replace(/^Lane Reservation Pool$/i, "Lane Reservation (Pool)");
+                const cls = escapeHtml(rawCls);
                 return `<li><span>${label}</span><span class="badge badge-booked">${cls}</span></li>`;
             }).join("");
             upcomingEl.innerHTML = `<ul class="info-list">${items}</ul>`;
